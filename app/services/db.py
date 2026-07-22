@@ -3,7 +3,7 @@ from typing import Generator
 
 from sqlmodel import Session, SQLModel, select
 
-from model import Listing, User, UserCreate
+from app.model import Listing, User, UserCreate
 
 
 def create_db_and_tables(engine):

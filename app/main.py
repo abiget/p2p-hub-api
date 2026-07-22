@@ -16,9 +16,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, create_engine, select
 
-from model import CreateListing, Listing, ListingsResponse, UpdateListing, User
-from services.api import get_binance_ad_data
-from services.db import (
+from .model import CreateListing, Listing, ListingsResponse, UpdateListing, User
+from app.services.api import get_binance_ad_data
+from app.services.db import (
     check_listing_exists,
     create_db_and_tables,
     get_or_create_user,
@@ -334,4 +334,4 @@ def get_all_listings(
     return {"listings": listings}
 
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+app.mount("/", StaticFiles(directory="app/static", html=True), name="static")

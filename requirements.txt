@@ -16,6 +16,8 @@ fastapi==0.139.2
     # via p2p-hub-api
 greenlet==3.5.4 ; platform_machine == 'AMD64' or platform_machine == 'WIN32' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'ppc64le' or platform_machine == 'win32' or platform_machine == 'x86_64'
     # via sqlalchemy
+gunicorn==26.0.0
+    # via p2p-hub-api
 h11==0.16.0
     # via httpcore
 httpcore==1.0.9
@@ -26,6 +28,8 @@ idna==3.18
     # via
     #   anyio
     #   httpx
+packaging==26.2
+    # via gunicorn
 psycopg==3.3.4
     # via p2p-hub-api
 pydantic==2.13.4
@@ -57,3 +61,5 @@ typing-inspection==0.4.2
     #   pydantic
 tzdata==2026.3 ; sys_platform == 'win32'
     # via psycopg
+unicorn==2.1.4
+    # via p2p-hub-api
