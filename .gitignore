@@ -8,6 +8,5 @@ __pycache__/
 .venv/
 .env
 
-app/static
 compose.yaml
 database.db
