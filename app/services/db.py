@@ -1,6 +1,4 @@
 from datetime import datetime
-from typing import Generator
-
 from sqlmodel import Session, SQLModel, select
 
 from app.model import Listing, User, UserCreate

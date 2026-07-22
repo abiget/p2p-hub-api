@@ -36,8 +36,6 @@ idna==3.18
     #   httpx
 packaging==26.2
     # via gunicorn
-psycopg==3.3.4
-    # via p2p-hub-api
 pydantic==2.13.4
     # via
     #   fastapi
@@ -56,7 +54,6 @@ typing-extensions==4.16.0
     # via
     #   anyio
     #   fastapi
-    #   psycopg
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
@@ -67,7 +64,5 @@ typing-inspection==0.4.2
     # via
     #   fastapi
     #   pydantic
-tzdata==2026.3 ; sys_platform == 'win32'
-    # via psycopg
 uvicorn==0.51.0
     # via p2p-hub-api
