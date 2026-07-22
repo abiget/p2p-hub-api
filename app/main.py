@@ -10,6 +10,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import NullPool
 from sqlalchemy.exc import SQLAlchemyError
 
 # from fastapi.staticfiles import StaticFiles
@@ -28,8 +29,22 @@ from app.services.db import (
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-sqlite_file_name = os.environ.get("SQLITE_FILE_NAME", "database.db")
-engine = create_engine(f"sqlite:///{sqlite_file_name}")
+
+RAW_DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if RAW_DATABASE_URL:
+    if "://" in RAW_DATABASE_URL:
+        _, connection_path = RAW_DATABASE_URL.split("://", 1)
+    else:
+        connection_path = RAW_DATABASE_URL
+
+    DATABASE_URL = f"postgresql+psycopg://{connection_path}"
+
+    engine = create_engine(DATABASE_URL, poolclass=NullPool)
+else:
+    # Local fallback for development on your machine
+    engine = create_engine("sqlite:///database.db")
+
 
 BINANCE_API_URL = os.environ.get("BINANCE_API_URL", "https://api.binance.com")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173/")
@@ -200,8 +215,6 @@ def update_listing(
     new_url = data.get("binance_ad_url", listing.binance_ad_url)
     binance_ad_code = extract_binance_ad_code(new_url)
     clean_ad_url = get_clean_binance_ad_url(binance_ad_code)
-    response = get_binance_ad_data(client, binance_ad_code, BINANCE_API_URL)
-
     response = get_binance_ad_data(client, binance_ad_code, BINANCE_API_URL)
 
     if response.status_code != 200:

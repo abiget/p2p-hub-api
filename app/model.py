@@ -1,6 +1,7 @@
 from typing import List
 
-from sqlmodel import JSON, Column, Field, Relationship, SQLModel
+from sqlmodel import Column, Field, Relationship, SQLModel
+from sqlalchemy.dialects.postgresql import JSON
 
 
 class UserCreate(SQLModel):

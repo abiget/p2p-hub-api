@@ -9,3 +9,5 @@ __pycache__/
 .env
 
 app/static
+compose.yaml
+database.db
