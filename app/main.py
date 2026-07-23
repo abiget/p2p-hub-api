@@ -10,12 +10,13 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import NullPool
+from sqlalchemy import NullPool, String
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.exc import SQLAlchemyError
 
 # from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import selectinload
-from sqlmodel import Session, col, create_engine, select
+from sqlmodel import Session, cast, col, create_engine, select
 
 from app.services.api import get_binance_ad_data
 from app.services.db import (
@@ -333,7 +334,7 @@ def get_all_listings(
 
     if payment_methods is not None:
         statement = statement.where(
-            col(Listing.payment_methods).overlap(payment_methods)
+            col(Listing.payment_methods).overlap(cast(payment_methods, ARRAY(String)))
         )
 
     if nick_name is not None:
