@@ -15,7 +15,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 # from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import selectinload
-from sqlmodel import Session, create_engine, select
+from sqlmodel import Session, col, create_engine, select
 
 from app.services.api import get_binance_ad_data
 from app.services.db import (
@@ -320,6 +320,7 @@ def get_all_listings(
 ):
     statement = (
         select(Listing)
+        .join(User)
         .where(Listing.active == True)
         .options(selectinload(Listing.user))
     )
@@ -331,10 +332,12 @@ def get_all_listings(
         statement = statement.where(Listing.max_limit >= price_max)
 
     if payment_methods is not None:
-        statement = statement.where(Listing.payment_methods.overlap(payment_methods))
+        statement = statement.where(
+            col(Listing.payment_methods).overlap(payment_methods)
+        )
 
     if nick_name is not None:
-        statement = statement.where(Listing.nick_name.contains(nick_name))
+        statement = statement.where(User.nick_name.contains(nick_name))
 
     if sort == "price_asc":
         statement = statement.order_by(Listing.price.asc())
