@@ -1,11 +1,19 @@
 from datetime import datetime
+
+from sqlalchemy import text
 from sqlmodel import Session, SQLModel, select
 
 from app.model import Listing, User, UserCreate
 
 
 def create_db_and_tables(engine):
+    print("Connecting...")
+    with engine.connect() as conn:
+        print("Connected!")
+        print(conn.execute(text("SELECT 1")).scalar())
+    print("Now creating tables...")
     SQLModel.metadata.create_all(engine)
+    print("Finished")
 
 
 def get_session(engine):

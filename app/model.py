@@ -1,7 +1,8 @@
 from typing import List
 
+from sqlalchemy import String
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlmodel import Column, Field, Relationship, SQLModel
-from sqlalchemy.dialects.postgresql import JSON
 
 
 class UserCreate(SQLModel):
@@ -32,7 +33,7 @@ class ListingBase(SQLModel):
     min_limit: float
     max_limit: float
     tradable_quantity: float
-    payment_methods: List[str] = Field(sa_column=Column(JSON))
+    payment_methods: List[str] = Field(sa_column=Column(ARRAY(String)))
     payment_time_limit: int | None = None
     active: bool = True
     created_at: str | None = None

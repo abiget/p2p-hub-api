@@ -17,7 +17,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, create_engine, select
 
-from .model import CreateListing, Listing, ListingsResponse, UpdateListing, User
 from app.services.api import get_binance_ad_data
 from app.services.db import (
     check_listing_exists,
@@ -25,6 +24,8 @@ from app.services.db import (
     get_or_create_user,
     get_session,
 )
+
+from .model import CreateListing, Listing, ListingsResponse, UpdateListing, User
 
 logger = logging.getLogger(__name__)
 
@@ -52,13 +53,16 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173/")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    print("Creating HTTP client")
     app.state.http_client = httpx.Client()
+
+    print("Creating tables...")
     create_db_and_tables(engine)
+
+    print("Done!")
 
     yield
 
-    # Shutdown
     app.state.http_client.close()
 
 
@@ -289,15 +293,12 @@ async def get_my_listings(telegram_id: int, session: SessionDep):
     statement = (
         select(Listing)
         .join(User)
-        .where((User.telegram_id == telegram_id) & (Listing.active == False))
+        .where((User.telegram_id == telegram_id) & (Listing.active == True))
         .options(selectinload(Listing.user))
         .order_by(Listing.created_at.desc())
     )
 
     listings = session.exec(statement).all()
-
-    if not listings:
-        raise HTTPException(status_code=404, detail="No listings found for this user")
 
     logger.info(
         "Retrieved %d listings for user with telegram_id=%d",
@@ -319,7 +320,7 @@ def get_all_listings(
 ):
     statement = (
         select(Listing)
-        .where(Listing.active == False)
+        .where(Listing.active == True)
         .options(selectinload(Listing.user))
     )
 
@@ -330,10 +331,10 @@ def get_all_listings(
         statement = statement.where(Listing.max_limit >= price_max)
 
     if payment_methods is not None:
-        statement = statement.where(Listing.payment_methods.contains(payment_methods))
+        statement = statement.where(Listing.payment_methods.overlap(payment_methods))
 
     if nick_name is not None:
-        statement = statement.where(Listing.nick_name, "LIKE", nick_name)
+        statement = statement.where(Listing.nick_name.contains(nick_name))
 
     if sort == "price_asc":
         statement = statement.order_by(Listing.price.asc())
